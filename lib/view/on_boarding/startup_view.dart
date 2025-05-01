@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery/view/home/screens/home_view.dart';
 import 'package:food_delivery/view/login/welcome_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StartupView extends StatefulWidget {
   const StartupView({super.key});
@@ -12,18 +14,33 @@ class _StartupViewState extends State<StartupView> {
   @override
   void initState() {
     super.initState();
-    goWelcomePage();
+    checkLoginStatus();
   }
 
-  void goWelcomePage() async {
-    await Future.delayed(const Duration(seconds: 3));
-    welcomePage();
+  void checkLoginStatus() async {
+    await Future.delayed(const Duration(seconds: 2));
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLoggedIn = prefs.getBool('is_logged_in') ?? false;
+
+    if (isLoggedIn) {
+      goToHomePage();
+    } else {
+      goToWelcomePage();
+    }
   }
 
-  void welcomePage() {
-    Navigator.push(
+  void goToWelcomePage() {
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const WelcomeView()),
+    );
+  }
+
+  void goToHomePage() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const HomeView()),
     );
   }
 
